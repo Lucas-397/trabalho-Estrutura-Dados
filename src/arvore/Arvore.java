@@ -19,9 +19,9 @@ public class Arvore {
 	public int getQuantNos(){
 		return this.quantNos;
 	}
-	//inserir um novo nó na arvore. Sempre insere em um atributo que seja igual a null
+	//inserir um novo nï¿½ na arvore. Sempre insere em um atributo que seja igual a null
 	public boolean inserir (Item elem){
-		if (pesquisar (elem.getChave())){
+		if (pesquisar (elem.getChave()) || pesquisar(String.valueOf(elem.getCodigoBarras()))){
 			return false;
 		}else{
 			this.raiz = inserir (elem, this.raiz);
@@ -34,7 +34,8 @@ public class Arvore {
 			NoArv novo = new NoArv(elem);
 			return novo;
 		}else {
-			if (elem.getChave() < no.getInfo().getChave()){
+			//if (elem.getChave() < no.getInfo().getChave()){
+			if(elem.getChave().compareTo(no.getInfo().getChave()) < 0){
 				no.setEsq(inserir(elem, no.getEsq()));
 				return no;
 			}else{
@@ -43,29 +44,31 @@ public class Arvore {
 			}
 		}
 	}
-	//Pesquisa se um determinado valor está na árvore
-	public boolean pesquisar (int chave){
-		if (pesquisar (chave, this.raiz)!= null){
+	//Pesquisa se um determinado valor estï¿½ na ï¿½rvore
+	public boolean pesquisar (String chave){
+		if (pesquisar (chave, this.raiz) != null){
 			return true;
 		}else{
 			return false;
 		}
 	}
-	private NoArv pesquisar (int chave, NoArv no){
+	private NoArv pesquisar (String chave, NoArv no){
+
 		if (no != null){
-			if (chave < no.getInfo().getChave()){
+			String noArv = no.getInfo().getChave();
+			if (chave.compareTo(noArv) < 0){
 				no = pesquisar (chave, no.getEsq());
 			}else{
-				if (chave > no.getInfo().getChave()){
+				if (chave.compareTo(noArv) > 0){
 					no = pesquisar (chave, no.getDir());
 				}
 			}
 		}
 		return no;
 	}
-//remove um determinado nó procurando pela chave. O nó pode estar em qualquer
-//posição na árvore
-	public boolean remover (int chave){
+//remove um determinado nï¿½ procurando pela chave. O nï¿½ pode estar em qualquer
+//posiï¿½ï¿½o na ï¿½rvore
+	public boolean remover (String chave){
 		if (pesquisar (chave, this.raiz) != null){
 			this.raiz = remover (chave, this.raiz);
 			this.quantNos--;
@@ -75,11 +78,11 @@ public class Arvore {
 			return false;
 		}
 	}
-	public NoArv remover (int chave, NoArv arv){
-		if (chave < arv.getInfo().getChave()){
+	public NoArv remover (String chave, NoArv arv){
+		if (chave.compareTo(arv.getInfo().getChave()) < 0){
 			arv.setEsq(remover (chave, arv.getEsq()));
 		}else{
-			if (chave > arv.getInfo().getChave()){
+			if (chave.compareTo( arv.getInfo().getChave()) > 0){
 				arv.setDir(remover (chave, arv.getDir()));
 			}else{
 				if (arv.getDir()== null){
@@ -121,7 +124,7 @@ public class Arvore {
 		}
 		return vet;
 	}
-	//caminhamento pré-fixado
+	//caminhamento prï¿½-fixado
 	public Item [] CamPreFixado (){
 		int []n= new int[1];
 		n[0]=0;
@@ -137,7 +140,7 @@ public class Arvore {
 		}
 		return vet;
 	}
-	//caminhamento pós-fixado
+	//caminhamento pï¿½s-fixado
 	public Item [] CamPosFixado (){
 		int []n= new int[1];
 		n[0]=0;

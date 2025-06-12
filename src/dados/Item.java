@@ -50,4 +50,8 @@ public class Item {
 	public String getNomeProduto (){
 		return this.nomeProduto;
 	}
+
+	public String getChave(){
+		return this.nomeProduto;
+	}
 }
