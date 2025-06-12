@@ -66,6 +66,7 @@ public class Arvore {
 		}
 		return no;
 	}
+
 //remove um determinado n� procurando pela chave. O n� pode estar em qualquer
 //posi��o na �rvore
 	public boolean remover (String chave){
@@ -157,4 +158,30 @@ public class Arvore {
 		return vet;
 	}
 
+	public boolean pesquisarCodigoBarras (int codigoBarras){
+		Item[]  itens = this.CamPreFixado();
+		for (Item item : itens) {
+			if(item.getCodigoBarras() == codigoBarras) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Item pesquisarItemSupermercado(String nomeProduto, NoArv arv){
+		if(this.pesquisar(nomeProduto)){
+			if(arv.getInfo().getChave() != nomeProduto){
+				if(nomeProduto.compareTo(arv.getInfo().getChave()) > 0){
+					arv = pesquisarItemSupermercado(nomeProduto, arv.getDir());
+				}else if(){
+					
+				}
+				
+
+			}else{
+				return arv.getInfo();
+			}
+		}
+		return null
+	}
 }
