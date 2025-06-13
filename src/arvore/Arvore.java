@@ -1,5 +1,6 @@
 package arvore;
 
+import dados.ContagemCategoria;
 import dados.Item;
 
 public class Arvore {
@@ -158,6 +159,7 @@ public class Arvore {
 		return vet;
 	}
 
+	//funcao para verificar se o codigo de barras existes antes de inserir na arvore
 	public boolean pesquisarCodigoBarras (int codigoBarras){
 		Item[]  itens = this.CamPreFixado();
 		for (Item item : itens) {
@@ -167,21 +169,102 @@ public class Arvore {
 		}
 		return false;
 	}
+	
+	public void mostrarItemSupermercado(String nomeProduto){
+		Item itemSupermercado = this.pesquisarItemSupermercado(nomeProduto, this.raiz).getInfo();
+		if(itemSupermercado.getChave() != raiz.getInfo().getChave()){
+			System.out.println("Produto encontado");
+			System.out.println("Nome do Produto: " + itemSupermercado.getChave());
+			System.out.println("Codigo de Barras: " + itemSupermercado.getCodigoBarras());
+			System.out.println("Preco Unitario: " + itemSupermercado.getPrecoUnitario());
+			System.out.println("Quantidade em Estoque: " + itemSupermercado.getQuantidadeEstoque());
+			System.out.println("Categoria: " + itemSupermercado.getCategoria());
+		}else{
+			System.out.println(" Produto " + nomeProduto + " não foi encontado");
+		}
 
-	public Item pesquisarItemSupermercado(String nomeProduto, NoArv arv){
+	}
+
+	public NoArv pesquisarItemSupermercado(String nomeProduto, NoArv arv){
 		if(this.pesquisar(nomeProduto)){
 			if(arv.getInfo().getChave() != nomeProduto){
 				if(nomeProduto.compareTo(arv.getInfo().getChave()) > 0){
 					arv = pesquisarItemSupermercado(nomeProduto, arv.getDir());
-				}else if(){
-					
+				}else if(nomeProduto.compareTo(arv.getInfo().getChave()) < 0){
+					arv = pesquisarItemSupermercado(nomeProduto, arv.getEsq());
 				}
-				
-
 			}else{
-				return arv.getInfo();
+				return arv;
 			}
 		}
-		return null
+		return arv;
+	}
+
+
+	public void mostraQuantidadeItemCategoria(){
+		ContagemCategoria[] listaInformacoes = contarItenCategoria();
+		for(int i = 0; i < listaInformacoes.length; i++){
+			if(listaInformacoes[i] != null){
+				System.out.println(listaInformacoes[i].getQuantidadeProdutos() +  " produtos em " + listaInformacoes[i].getCategoria());
+			}
+		}
+	}
+
+	public ContagemCategoria[] contarItenCategoria(){
+		Item[] produtos = this.CamPosFixado();
+		
+		int[] quantidadeProdutos = new int[this.quantNos];
+		String[] categorias = new String[this.quantNos];
+		int categoriasIndex = 0;
+
+		for(Item produto: produtos){
+			//confere se a categoria do produto já esta na lista de categorias caso nao retorna a categoria do item
+			String  categoriaItem = searchCategoriaProduto(categorias, produto);
+
+			//adiciona categoria do item caso a categoria retornada seja nula
+			if(categoriaItem ==  null){
+				categorias[categoriasIndex] = produto.getCategoria();
+				quantidadeProdutos[categoriasIndex]++;
+				categoriasIndex++;
+			}else{
+				//encontra a qual categoria o item pertence e aumenta a quantidade para um
+				for(int i = 0; i < categorias.length; i++){
+					if(categorias[i] != null){
+						if(categorias[i].equals(categoriaItem)){
+							System.out.println("hello");
+							quantidadeProdutos[i]++;
+						}
+					}
+				}
+			}
+		}
+
+		System.out.println(quantidadeProdutos[0]);
+		return montaListaContagemCategoria(categorias, quantidadeProdutos);
+	}
+
+	//pesquisa a qual categoria o produto pertence
+	public String searchCategoriaProduto(String[] categorias, Item produto){
+		for(String categoria: categorias){
+			if(categoria != null){
+				if(categoria.equals(produto.getCategoria())){
+					return categoria;
+				}
+			}
+		}
+		return null;
+	}
+	
+	// monta a lista de categorias utilizando o tipo ContagemCategoria e retorna-o (feito para facilitar a leitura)
+	public ContagemCategoria[] montaListaContagemCategoria(String[] categorias, int[] quantidadeProdutos){
+		ContagemCategoria[] listaInformacoes = new ContagemCategoria[this.quantNos];
+		
+		for(int i = 0; i < listaInformacoes.length; i++){
+			if(categorias[i] != null){
+				listaInformacoes[i] = new ContagemCategoria(categorias[i], quantidadeProdutos[i]);
+			}
+		}
+		System.out.println(listaInformacoes[5]);
+		return listaInformacoes;
 	}
 }
