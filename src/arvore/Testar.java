@@ -14,10 +14,17 @@ class Testar{
         arvore.inserir(new Item("Produto F", 123451, 30.0f, 14, "Categoria 6"));
         arvore.inserir(new Item("Produto G", 123452, 50.0f, 1, "Categoria 7"));
 
+        arvore.changeProdutoData("Produto A");
 
         Item[] itens = new Item[10];
         itens = arvore.CamPosFixado();
 
-        arvore.exibeMenorPreco();
+        for(Item item : itens){
+            System.out.println("Produto: " + item.getNomeProduto() + 
+                            ", Preço: " + item.getPrecoUnitario() + 
+                            ", Quantidade: " + item.getQuantidadeEstoque() + 
+                            ", Código: " + item.getCodigoBarras() + 
+                            ", Categoria: " + item.getCategoria());
+        }
     }
 }
