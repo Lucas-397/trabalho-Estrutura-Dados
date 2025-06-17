@@ -1,5 +1,7 @@
 package arvore;
 
+import java.util.Scanner;
+
 import dados.ContagemCategoria;
 import dados.Item;
 
@@ -364,6 +366,109 @@ public class Arvore {
 	}
 
 	//2.f)
+	public boolean removerProduto (String chave){
+		//confere se o produto procurado existe e executa a função caso sim          
+		if (pesquisar (chave, this.raiz) != null){
+			this.raiz = removerProduto (chave, this.raiz);
+			this.quantNos--;
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	public NoArv removerProduto (String chave, NoArv arv){
+		//percorre a lista buscando o produto pela chave
+		if (chave.compareTo(arv.getInfo().getChave()) < 0){
+			arv.setEsq(removerProduto (chave, arv.getEsq()));
+		}else{
+			if (chave.compareTo( arv.getInfo().getChave()) > 0){
+				arv.setDir(removerProduto (chave, arv.getDir()));
+			}else{
+				//apos encontrar o produto (não é maior nem menor que ou seja é igual) confere se o produto é um no folha ou não folha
+				//caso o produto seja um no não folha pega o confere o grau do no 
+				if (arv.getDir()== null){
+					// se o produto tiver grau 1 retorna o no filho
+					return arv.getEsq();
+				}else{
+					if (arv.getEsq() == null){ 
+						return arv.getDir();
+					}else{
+						//se o produto tem grau 2 percorre a arvore buscando o maior elemento a esquerda 
+						arv.setEsq(substituirNoGrauDois(arv, arv.getEsq()));
+					}
+				}
+			}
+		}
+		return arv;
+	}
+
+	public NoArv substituirNoGrauDois(NoArv arv, NoArv produto){
+		//enquanto houver Nos a direita (com chave de valor maior que o atual) percorre este caminho
+		if (produto.getDir() != null){
+			produto.setDir(Arrumar (arv, produto.getDir()));
+		}
+		else{//define o maior elemento como o info do no a ser apagado
+			arv.setInfo(produto.getInfo());
+			produto = produto.getEsq();
+		}
+		return produto;
+	}
+
+//2.g)
+	public void changeProdutoData(String chave){
+		NoArv produto = this.pesquisar(chave, raiz);
+		if(produto != null){
+			Scanner scanner = new Scanner(System.in);
+			boolean continuar = false;
+			
+			//garante que o valor digitado é um float
+			while (!continuar) {
+				System.out.println("Preço unitário atual: " + produto.getInfo().getPrecoUnitario());
+				System.out.println("Digite o novo preço unitário: ");
+				
+				if (scanner.hasNextFloat()) {
+					float precoUnitario = scanner.nextFloat();
+					produto.getInfo().setPrecoUnitario(precoUnitario);
+					continuar = true; // sai do loop
+				} else {
+					System.out.println("Valor inválido! Digite um número decimal (ex: 10.5).");
+					scanner.next(); // consome a entrada inválida para não travar o loop
+				}
+			}
+			//reinicia a variavel continuar e o scanner
+			continuar = false;
+
+			//garante que o valor digitado é um inteiro
+			while(!continuar){
+				System.out.println("Quantidade em estoque atual: " + produto.getInfo().getQuantidadeEstoque());
+				System.out.println("Digite a nova quantidade em estoque: ");
+				if(scanner.hasNextInt()){
+					produto.getInfo().setQuantidadeEstoque(scanner.nextInt());
+					continuar = true; // sai do loop
+				}else{
+					System.out.println("Valor inválido! Digite um número inteiro.");
+					scanner.next(); // consome a entrada inválida para não travar o loop
+				}
+			}
+
+			continuar = false;
+			String categoria;
+
+			while(!continuar) {
+				System.out.println("Categoria atual: " + produto.getInfo().getCategoria());
+				System.out.println("Digite a nova categoria: ");
+				categoria = scanner.nextLine();
+
+				if (!categoria.trim().isEmpty()) {
+				produto.getInfo().setCategoria(categoria.trim());
+				continuar = true; // Sai do loop
+				} else {
+					System.out.println("Categoria inválida! Digite uma categoria não vazia.");
+				}
+			}
+		}	
+	}
 
 	public void produtoToString(Item produto){
 		System.out.println("Nome do Produto: " + produto.getChave());
