@@ -18,10 +18,10 @@ public class Main {
             String senha = scanner.nextLine();
 
             if (autenticacaoValida(login, senha)) {
-                System.out.println("✅ Login realizado com sucesso!");
+                System.out.println("Login realizado com sucesso!");
                 loginBemSucedido = true;
             } else {
-                System.out.println("❌ Usuário inválido ou senha incorreta. Tente novamente.\n");
+                System.out.println("Usuário inválido ou senha incorreta. Tente novamente.\n");
             }
         }
 
