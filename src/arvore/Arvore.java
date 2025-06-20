@@ -22,14 +22,102 @@ public class Arvore {
 	public int getQuantNos(){
 		return this.quantNos;
 	}
+
+
+	public void inserir(){
+		Scanner scanner = new Scanner(System.in);
+		boolean validation = false;
+
+		Item item = new Item("", 0, 0, 0, "");
+
+		while(!validation){
+			System.out.println("Digite o nome do produto: ");
+			String nomeProduto = scanner.nextLine();
+
+			if(!nomeProduto.isEmpty()){
+				item.setNomeProduto(nomeProduto);
+				validation = true;
+			}else{
+				System.out.println("Nome do produto não pode ser vazio");
+			}
+		}
+
+		validation = false;
+
+		while(!validation){
+			System.out.println("Digite o codigo de barras do produto: ");
+			
+			if(scanner.hasNextInt()){
+				item.setCodigoBarras(scanner.nextInt());
+				validation = true;
+			}else{
+				System.out.println("Codigo de barras invalido, digite um numero inteiro");
+				scanner.nextLine();
+			}
+		}
+
+		validation = false;
+
+		while(!validation){
+			System.out.println("Digite o preco unitario do produto: ");
+
+			if(scanner.hasNextFloat()){
+				item.setPrecoUnitario(scanner.nextFloat());
+				validation = true;
+			}else{
+				System.out.println("Preço unitario invalido");
+				scanner.nextLine();
+			}
+		}
+
+		validation = false;
+
+		while(!validation){
+			System.out.println("Digite a quantidade em estoque do produto: ");
+			
+			if(scanner.hasNextInt()){
+				item.setQuantidadeEstoque(scanner.nextInt());
+				validation = true;
+			}else{
+				System.out.println("Quantidade em estoque invalido, digite um numeor inteiro");
+				scanner.nextLine();
+			}
+
+		}
+
+		validation = false;
+		scanner.nextLine();
+
+		while (!validation) {
+			System.out.println("Digite a categoria do produto: ");
+			String categoria = scanner.nextLine();
+
+			if(!categoria.isEmpty()){
+				item.setCategoria(categoria);
+				validation = true;
+			}else{
+				System.out.println("Categoria não pode ser vazia");
+			}
+		}
+		
+		inserir(item);
+	}
+
 	//inserir um novo n� na arvore. Sempre insere em um atributo que seja igual a null
 	public boolean inserir (Item elem){
-		if (pesquisar (elem.getChave()) || pesquisar(String.valueOf(elem.getCodigoBarras()))){
+		if (pesquisar (elem.getChave())){
+			System.out.println("Produto ja cadastrada, tente novamente");
 			return false;
 		}else{
-			this.raiz = inserir (elem, this.raiz);
-			this.quantNos++;
-			return true;
+			if( pesquisar(String.valueOf(elem.getCodigoBarras()))){
+				System.out.println("Codigo de barras ja cadastrado, tente novamente");
+				return false;
+			}else{
+				this.raiz = inserir (elem, this.raiz);
+				this.quantNos++;
+				System.out.println("Produto cadastrado com sucesso");
+				return true;
+			}
 		}
 	}
 	public NoArv inserir (Item elem, NoArv no){
@@ -37,7 +125,6 @@ public class Arvore {
 			NoArv novo = new NoArv(elem);
 			return novo;
 		}else {
-			//if (elem.getChave() < no.getInfo().getChave()){
 			if(elem.getChave().compareTo(no.getInfo().getChave()) < 0){
 				no.setEsq(inserir(elem, no.getEsq()));
 				return no;
@@ -177,14 +264,11 @@ public class Arvore {
 	
 	//2.b)
 	public void mostrarItemSupermercado(String nomeProduto){
-		Item itemSupermercado = this.pesquisarItemSupermercado(nomeProduto, this.raiz).getInfo();
-		if(itemSupermercado.getChave() != raiz.getInfo().getChave()){
-			System.out.println("Produto encontado");
-			this.produtoToString(itemSupermercado);
-		}else{
-			System.out.println(" Produto " + nomeProduto + " não foi encontado");
+		NoArv itemSupermercado = this.pesquisarItemSupermercado(nomeProduto, this.raiz);
+		if(itemSupermercado != null){
+			this.produtoToString(itemSupermercado.getInfo());
+			return;
 		}
-
 	}
 
 	
@@ -198,9 +282,11 @@ public class Arvore {
 					arv = pesquisarItemSupermercado(nomeProduto, arv.getEsq());
 				}
 			}else{
+				System.out.println("Produto encontado");
 				return arv;
 			}
 		}
+		System.out.println(" Produto " + nomeProduto + " não foi encontado");
 		return arv;
 	}
 	
@@ -208,15 +294,18 @@ public class Arvore {
 
 	//exibe a quantidade de produtos por categoria	
 	public void mostraQuantidadeItemCategoria(){
-		ContagemCategoria[] listaInformacoes = contarItenCategoria();
-		for(int i = 0; i < listaInformacoes.length; i++){
+		ContagemCategoria[] listaInformacoes = contarItensCategoria();//executa pesquisa de categorias
+		
+		for(int i = 0; i < listaInformacoes.length; i++){//loop de exibição
 			if(listaInformacoes[i] != null){
 				System.out.println(listaInformacoes[i].getQuantidadeProdutos() +  " produtos em " + listaInformacoes[i].getCategoria());
+			}else{
+				break; // se a categoria for nula, sai do loop
 			}
 		}
 	}
 
-	public ContagemCategoria[] contarItenCategoria(){
+	public ContagemCategoria[] contarItensCategoria(){
 		Item[] produtos = this.CamPosFixado();
 		
 		int[] quantidadeProdutos = new int[this.quantNos];
@@ -269,7 +358,6 @@ public class Arvore {
 				listaInformacoes[i] = new ContagemCategoria(categorias[i], quantidadeProdutos[i]);
 			}
 		}
-		System.out.println(listaInformacoes[5]);
 		return listaInformacoes;
 	}
 
