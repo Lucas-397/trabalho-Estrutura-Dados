@@ -27,10 +27,6 @@ public class Menu {
         }
 
         Arvore produtos = new Arvore();
-        produtos.inserir(new Item("Produto A", 123457, 12.0f, 10, "Categoria 1"));
-        produtos.inserir(new Item("Produto B", 123458, 16, 11, "Categoria 2"));
-        produtos.inserir(new Item("Produto C", 12345, 10.0f, 13, "Categoria 2"));
-
         int opcao;
 
         do {
