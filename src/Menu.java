@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import arvore.Arvore;
+import dados.Item;
 
 public class Menu {
     public static void main(String[] args){
@@ -26,6 +27,10 @@ public class Menu {
         }
 
         Arvore produtos = new Arvore();
+        produtos.inserir(new Item("Produto A", 123457, 12.0f, 10, "Categoria 1"));
+        produtos.inserir(new Item("Produto B", 123458, 16, 11, "Categoria 2"));
+        produtos.inserir(new Item("Produto C", 12345, 10.0f, 13, "Categoria 2"));
+
         int opcao;
 
         do {
@@ -63,9 +68,9 @@ public class Menu {
                     validation = false;
                     while(!validation){
                         System.err.println("Insira o nome do produto a ser buscado: ");
-
-                        if(!scanner.nextLine().trim().isEmpty()){
-                            produtos.mostrarItemSupermercado(scanner.nextLine());
+                        String pesquisa = scanner.nextLine();
+                        if(!pesquisa.isEmpty()){
+                            produtos.mostrarItemSupermercado(pesquisa);
                             validation = true;
                         }else{
                             System.out.println(" O nome do produto pesquisado não pode ser vazio");
@@ -92,7 +97,7 @@ public class Menu {
                     int min;
                     validation = false;
 
-                    while(validation){//validação para garantir que o usuário insira valores inteiros
+                    while(!validation){//validação para garantir que o usuário insira valores inteiros
                         System.out.print("Digite o valor mínimo: ");
                         while (!scanner.hasNextInt()) {
                             System.out.print("Digite um número válido para o valor mínimo: ");
@@ -108,13 +113,13 @@ public class Menu {
                         max = scanner.nextInt();
 
                         if (min < max) {
-                            produtos.filtraProdutosPreco(min, max);
+                            produtos.exibeProdutosIntervalo(min, max);
                             validation = true;
                         } else {
                             System.out.println("O valor mínimo deve ser menor que o valor máximo. Tente novamente.");
                         }
                     }
-                    
+                    break;
 
                 case 5:
                     if(produtos.getRaiz() == null){
@@ -140,14 +145,22 @@ public class Menu {
                     validation = false;
                     while(!validation){
                         System.out.print("Insira o nome do produto a ser excluído: ");
-                        if(!scanner.nextLine().trim().isEmpty()){
-                            produtos.removerProduto(scanner.nextLine());
+                        String pesquisa = scanner.nextLine();
+                        if(!pesquisa.isEmpty()){
+                            Boolean removido = produtos.removerProduto(pesquisa);
+                            if(removido){
+                                System.out.println("Produto removido com sucesso");
+                            }else{
+                                System.out.println("Produto não foi removido");
+
+                            }
                             validation = true;
                         }else{
                             System.out.println("O nome do produto a ser excluído não pode ser vazio.");
                             scanner.nextLine(); 
                         }   
                     }
+
                     break;
 
                 case 8:
@@ -158,8 +171,9 @@ public class Menu {
                     validation = false;
                     while(!validation){
                         System.out.print("Insira o nome do produto a ser atualizado: ");
-                        if(!scanner.nextLine().trim().isEmpty()){
-                            produtos.changeProdutoData(scanner.nextLine());
+                        String pesquisa = scanner.nextLine();
+                        if(!pesquisa.isEmpty()){
+                            produtos.changeProdutoData(pesquisa);
                             validation = true;
                         }else{
                             System.out.println("O nome do produto a ser atualizado não pode ser vazio.");
@@ -177,7 +191,7 @@ public class Menu {
                     break;
             }
 
-        } while (opcao != 3);
+        } while (opcao != 9);
 
         scanner.close();
     }

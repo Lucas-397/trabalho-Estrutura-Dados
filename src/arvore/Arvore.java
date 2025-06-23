@@ -24,92 +24,15 @@ public class Arvore {
 	}
 
 
-	public void inserir(){
-		Scanner scanner = new Scanner(System.in);
-		boolean validation = false;
-
-		Item item = new Item("", 0, 0, 0, "");
-
-		while(!validation){
-			System.out.println("Digite o nome do produto: ");
-			String nomeProduto = scanner.nextLine();
-
-			if(!nomeProduto.isEmpty()){
-				item.setNomeProduto(nomeProduto);
-				validation = true;
-			}else{
-				System.out.println("Nome do produto não pode ser vazio");
-			}
-		}
-
-		validation = false;
-
-		while(!validation){
-			System.out.println("Digite o codigo de barras do produto: ");
-			
-			if(scanner.hasNextInt()){
-				item.setCodigoBarras(scanner.nextInt());
-				validation = true;
-			}else{
-				System.out.println("Codigo de barras invalido, digite um numero inteiro");
-				scanner.nextLine();
-			}
-		}
-
-		validation = false;
-
-		while(!validation){
-			System.out.println("Digite o preco unitario do produto: ");
-
-			if(scanner.hasNextFloat()){
-				item.setPrecoUnitario(scanner.nextFloat());
-				validation = true;
-			}else{
-				System.out.println("Preço unitario invalido");
-				scanner.nextLine();
-			}
-		}
-
-		validation = false;
-
-		while(!validation){
-			System.out.println("Digite a quantidade em estoque do produto: ");
-			
-			if(scanner.hasNextInt()){
-				item.setQuantidadeEstoque(scanner.nextInt());
-				validation = true;
-			}else{
-				System.out.println("Quantidade em estoque invalido, digite um numeor inteiro");
-				scanner.nextLine();
-			}
-
-		}
-
-		validation = false;
-		scanner.nextLine();
-
-		while (!validation) {
-			System.out.println("Digite a categoria do produto: ");
-			String categoria = scanner.nextLine();
-
-			if(!categoria.isEmpty()){
-				item.setCategoria(categoria);
-				validation = true;
-			}else{
-				System.out.println("Categoria não pode ser vazia");
-			}
-		}
-		
-		inserir(item);
-	}
-
-	//inserir um novo n� na arvore. Sempre insere em um atributo que seja igual a null
+	//inserir um novo nó na arvore.
 	public boolean inserir (Item elem){
+		//pesquisar pelo nome do produto
 		if (pesquisar (elem.getChave())){
-			System.out.println("Produto ja cadastrada, tente novamente");
+			System.out.println("Produto ja cadastrado, tente novamente");
 			return false;
 		}else{
-			if( pesquisar(String.valueOf(elem.getCodigoBarras()))){
+			//pesquisa pelo codigo de barras;
+			if(pesquisar(String.valueOf(elem.getCodigoBarras()))){
 				System.out.println("Codigo de barras ja cadastrado, tente novamente");
 				return false;
 			}else{
@@ -136,11 +59,14 @@ public class Arvore {
 	}
 	//Pesquisa se um determinado valor est� na �rvore
 	public boolean pesquisar (String chave){
-		if (pesquisar (chave, this.raiz) != null){
-			return true;
-		}else{
-			return false;
+		if(!this.eVazia()){
+			if (pesquisar (chave, this.raiz) != null){
+				return true;
+			}else{
+				return false;
+			}
 		}
+		return false;
 	}
 	private NoArv pesquisar (String chave, NoArv no){
 
@@ -249,9 +175,90 @@ public class Arvore {
 	}
 
 	//A partir daqui somente meus codigos
+	//2.a)
+
+	//Cria o produto e faz verificações de tipagem
+	public void inserir(){
+		Scanner scanner = new Scanner(System.in);
+		boolean validation = false;
+
+		Item item = new Item("", 0, 0, 0, "");
+
+		while(!validation){
+			System.out.println("Digite o nome do produto: ");
+			String nomeProduto = scanner.nextLine();
+
+			if(!nomeProduto.isEmpty()){
+				item.setNomeProduto(nomeProduto);
+				validation = true;
+			}else{
+				System.out.println("Nome do produto não pode ser vazio");
+			}
+		}
+
+		validation = false;
+
+		while(!validation){
+			System.out.println("Digite o codigo de barras do produto: ");
+			
+			if(scanner.hasNextInt()){
+				item.setCodigoBarras(scanner.nextInt());
+				validation = true;
+			}else{
+				System.out.println("Codigo de barras invalido, digite um numero inteiro");
+				scanner.nextLine();
+			}
+		}
+
+		validation = false;
+
+		while(!validation){
+			System.out.println("Digite o preco unitario do produto: ");
+
+			if(scanner.hasNextFloat()){
+				item.setPrecoUnitario(scanner.nextFloat());
+				validation = true;
+			}else{
+				System.out.println("Preço unitario invalido");
+				scanner.nextLine();
+			}
+		}
+
+		validation = false;
+
+		while(!validation){
+			System.out.println("Digite a quantidade em estoque do produto: ");
+			
+			if(scanner.hasNextInt()){
+				item.setQuantidadeEstoque(scanner.nextInt());
+				validation = true;
+			}else{
+				System.out.println("Quantidade em estoque invalido, digite um numeor inteiro");
+				scanner.nextLine();
+			}
+
+		}
+
+		validation = false;
+		scanner.nextLine();
+
+		while (!validation) {
+			System.out.println("Digite a categoria do produto: ");
+			String categoria = scanner.nextLine();
+
+			if(!categoria.isEmpty()){
+				item.setCategoria(categoria);
+				validation = true;
+			}else{
+				System.out.println("Categoria não pode ser vazia");
+			}
+		}
+		
+		inserir(item);
+	}
+
 
 	//funcao para verificar se o codigo de barras existes antes de inserir na arvore
-	//2.a)
 	public boolean pesquisarCodigoBarras (int codigoBarras){
 		Item[]  itens = this.CamPreFixado();
 		for (Item item : itens) {
@@ -267,8 +274,10 @@ public class Arvore {
 		NoArv itemSupermercado = this.pesquisarItemSupermercado(nomeProduto, this.raiz);
 		if(itemSupermercado != null){
 			this.produtoToString(itemSupermercado.getInfo());
-			return;
+		}else{
+			System.out.println(" Produto " + nomeProduto + " não foi encontado");
 		}
+
 	}
 
 	
@@ -286,7 +295,6 @@ public class Arvore {
 				return arv;
 			}
 		}
-		System.out.println(" Produto " + nomeProduto + " não foi encontado");
 		return arv;
 	}
 	
@@ -298,7 +306,7 @@ public class Arvore {
 		
 		for(int i = 0; i < listaInformacoes.length; i++){//loop de exibição
 			if(listaInformacoes[i] != null){
-				System.out.println(listaInformacoes[i].getQuantidadeProdutos() +  " produtos em " + listaInformacoes[i].getCategoria());
+				System.out.println(listaInformacoes[i].getQuantidadeProdutos() +  " produto(s) em " + listaInformacoes[i].getCategoria());
 			}else{
 				break; // se a categoria for nula, sai do loop
 			}
@@ -332,8 +340,6 @@ public class Arvore {
 				}
 			}
 		}
-
-		System.out.println(quantidadeProdutos[0]);
 		return montaListaContagemCategoria(categorias, quantidadeProdutos);
 	}
 
@@ -379,6 +385,21 @@ public class Arvore {
 		}
 	}
 
+
+	public void exibeProdutosIntervalo(int min, int max){
+		Item[] produtos = this.filtraProdutosPreco(min, max);
+
+		if(produtos[0] != null){
+			for(Item produto: produtos){
+				if(produto != null){
+					this.produtoToString(produto);
+				}
+			}
+		}else{
+			System.out.println("Produto não encontrado");
+		}
+	}
+
 	// filtra os produtos que estão no intervalo de preço
 	public Item[] filtraProdutosPreco(int minimo, int maximo){
 		Item[] produtosIntervalo = new Item[this.quantNos];
@@ -419,7 +440,7 @@ public class Arvore {
 		return menorPreco;
 	}
 	public void exibeMaiorPreco(){
-		float maiorPreco = this.searchMenorPreco(this.raiz.getInfo().getPrecoUnitario(), this.raiz);
+		float maiorPreco = this.searchMaiorPreco(this.raiz.getInfo().getPrecoUnitario(), this.raiz);
 		Item produtoMaiorPreco = this.pesquisarByPrecoUnitario(maiorPreco);
 
 		if(produtoMaiorPreco != null){
@@ -429,19 +450,20 @@ public class Arvore {
 		}
 	}
 
-	//pesquisa o menor produto pelo precoUnitario
+	//pesquisa o maior produto pelo precoUnitario
 	public float searchMaiorPreco(float maiorPreco,NoArv arv){
 		if(arv != null){
-			maiorPreco = searchMenorPreco(maiorPreco, arv.getEsq());
+			maiorPreco = searchMaiorPreco(maiorPreco, arv.getEsq());
 			if(arv.getInfo().getPrecoUnitario() > maiorPreco){
 				maiorPreco = arv.getInfo().getPrecoUnitario();
 			}
-			maiorPreco = searchMenorPreco(maiorPreco, arv.getDir());
+			maiorPreco = searchMaiorPreco(maiorPreco, arv.getDir());
 		}
 
 		return maiorPreco;
 	}
 
+	//procura m item pelo seu preco unitario
 	public Item pesquisarByPrecoUnitario(float precoUnitario){
 		Item[] produtos = this.CamPosFixado();
 
@@ -475,10 +497,10 @@ public class Arvore {
 			}else{
 				//apos encontrar o produto (não é maior nem menor que ou seja é igual) confere se o produto é um no folha ou não folha
 				//caso o produto seja um no não folha pega o confere o grau do no 
-				if (arv.getDir()== null){
-					// se o produto tiver grau 1 retorna o no filho
+				if (arv.getDir() == null){//se o produto não possui filho  direita retorna o elemento a esquerda
 					return arv.getEsq();
 				}else{
+					//
 					if (arv.getEsq() == null){ 
 						return arv.getDir();
 					}else{
@@ -488,6 +510,7 @@ public class Arvore {
 				}
 			}
 		}
+		//retorna a raiz
 		return arv;
 	}
 

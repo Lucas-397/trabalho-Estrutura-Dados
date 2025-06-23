@@ -18,6 +18,11 @@ class Testar{
         Item[] itens = new Item[10];
         itens = arvore.CamPosFixado();
 
+        arvore.removerProduto("Produto A");
+        
+        for(Item item: itens){
+            System.out.println(item.getChave());
+        }
         
 
         arvore.inserir();
