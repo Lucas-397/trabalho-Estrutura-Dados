@@ -1,5 +1,6 @@
 package arvore;
 
+import java.nio.channels.NonReadableChannelException;
 import java.util.Scanner;
 
 import dados.ContagemCategoria;
@@ -340,10 +341,10 @@ public class Arvore {
 				}
 			}
 		}
-		return montaListaContagemCategoria(categorias, quantidadeProdutos);
+		return montaListaContagemCategoria(categorias, quantidadeProdutos);//junta as categorias com sua respectiva quantidade de produtos
 	}
 
-	// pesquisa a qual categoria o produto pertence
+	// pesquisa a qual categoria o produto pertence caso seja uma nova categoria retorna null
 	public String searchCategoriaProduto(String[] categorias, Item produto){
 		for(String categoria: categorias){
 			if(categoria != null){
@@ -369,15 +370,18 @@ public class Arvore {
 
 	//2.d)
 	//exibe os produtos que estão no intervalo de preço
-	public void mostrarProdutosIntervalo(int minimo, int maximo){
-		Item[] produtos = this.filtraProdutosPreco(minimo, maximo);
+	public void exibeProdutosIntervalo(int minimo, int maximo){
+		int[] produtosIndex = new int[1];
+		produtosIndex[0] = 0;
+		Item[] produtosIntervalo = new Item[this.quantNos];
+		produtosIntervalo = this.filtraProdutosPreco(minimo, maximo, produtosIndex, this.raiz ,produtosIntervalo);//retorna lista de produtos na faixa de preco
 
-		if(produtos[0] != null){
+		if(produtosIntervalo[0] != null){//confere se há produtos na lista 
 			System.out.println("Produtos encontrados no intervalo de " + minimo + " a " + maximo + ":");
 			System.out.println("-----------------------------");	
-			for(Item produto: produtos){
+			for(Item produto: produtosIntervalo){
 				if(produto != null) {
-					this.produtoToString(produto);
+					this.produtoToString(produto);//funcao para exibicao formatada do(s) Item(s)
 				}
 			}
 		}else{
@@ -385,45 +389,29 @@ public class Arvore {
 		}
 	}
 
-
-	public void exibeProdutosIntervalo(int min, int max){
-		Item[] produtos = this.filtraProdutosPreco(min, max);
-
-		if(produtos[0] != null){
-			for(Item produto: produtos){
-				if(produto != null){
-					this.produtoToString(produto);
-				}
-			}
-		}else{
-			System.out.println("Produto não encontrado");
-		}
-	}
-
 	// filtra os produtos que estão no intervalo de preço
-	public Item[] filtraProdutosPreco(int minimo, int maximo){
-		Item[] produtosIntervalo = new Item[this.quantNos];
-		int produtosIndex = 0;
-		Item[] produtos = this.CamPosFixado();
-		for(Item produto : produtos){
-			if(produto.getPrecoUnitario() <= maximo && produto.getPrecoUnitario() >= minimo){
-				produtosIntervalo[produtosIndex] = produto;
-				produtosIndex++;
-			}
-		}
+	public Item[] filtraProdutosPreco(int minimo, int maximo, int[] produtosIndex, NoArv arv, Item[] produtosIntervalo ){
 
+		if(arv != null){
+			produtosIntervalo = filtraProdutosPreco(minimo, maximo, produtosIndex, arv.getDir(), produtosIntervalo);
+			if(arv.getInfo().getPrecoUnitario() <= maximo && arv.getInfo().getPrecoUnitario() >= minimo){//confere se o valor do item esta no intervalo
+				produtosIntervalo[produtosIndex[0]] = arv.getInfo();
+				produtosIndex[0]++;
+			}
+			produtosIntervalo = filtraProdutosPreco(minimo, maximo, produtosIndex, arv.getEsq(), produtosIntervalo);
+		}
 		return produtosIntervalo;
 	}
-
+	
 	//2.e)
 
 	public void exibeMenorPreco(){
 		float menorPreco = this.searchMenorPreco(this.raiz.getInfo().getPrecoUnitario(), this.raiz);
-		Item produtoMenorPreco = this.pesquisarByPrecoUnitario(menorPreco);
-		if(produtoMenorPreco != null){
+		NoArv produtoMenorPreco = this.pesquisarByPrecoUnitario(menorPreco, this.raiz, this.raiz);//procura o Item correspondente ao menor preco
+		if(produtoMenorPreco.getInfo() != null){
 			System.out.println("O produto de menor preco custa: R$ " + menorPreco);
 			System.out.println("-----------------------------");
-			this.produtoToString(produtoMenorPreco);
+			this.produtoToString(produtoMenorPreco.getInfo());
 		}
 	}
 
@@ -439,14 +427,16 @@ public class Arvore {
 
 		return menorPreco;
 	}
+	
+	//exibe o produto de maior preco
 	public void exibeMaiorPreco(){
 		float maiorPreco = this.searchMaiorPreco(this.raiz.getInfo().getPrecoUnitario(), this.raiz);
-		Item produtoMaiorPreco = this.pesquisarByPrecoUnitario(maiorPreco);
+		NoArv produtoMaiorPreco = this.pesquisarByPrecoUnitario(maiorPreco, this.raiz, this.raiz);
 
-		if(produtoMaiorPreco != null){
+		if(produtoMaiorPreco.getInfo() != null){
 			System.out.println("O produto de maior preco custa: R$ " + maiorPreco);
 			System.out.println("-----------------------------");
-			this.produtoToString(produtoMaiorPreco);
+			this.produtoToString(produtoMaiorPreco.getInfo());
 		}
 	}
 
@@ -463,16 +453,19 @@ public class Arvore {
 		return maiorPreco;
 	}
 
-	//procura m item pelo seu preco unitario
-	public Item pesquisarByPrecoUnitario(float precoUnitario){
-		Item[] produtos = this.CamPosFixado();
+	//procura um item pelo seu preco unitario
+	public NoArv pesquisarByPrecoUnitario(float precoUnitario, NoArv arv, NoArv searchedNo){//searchedNo ira armazenar o no procurado enquanto arv ira percorrer a lista
 
-		for(Item produto : produtos){
-			if(produto.getPrecoUnitario() == precoUnitario){
-				return produto;
+		if(arv != null){
+			searchedNo = pesquisarByPrecoUnitario(precoUnitario, arv.getDir(), searchedNo);
+			if(arv.getInfo().getPrecoUnitario() == precoUnitario){
+				searchedNo = arv;
 			}
+			searchedNo = pesquisarByPrecoUnitario(precoUnitario, arv.getEsq(), searchedNo);
 		}
-		return null;
+
+		return searchedNo;
+		
 	}
 
 	//2.f)
